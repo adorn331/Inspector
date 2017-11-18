@@ -48,6 +48,16 @@ class PropertyValidder(object):
                     self.valid_errors.append(self.error_mapping['regex'])
                     valid = False
 
+            """=============== extend here========================
+                you can extend new require_item like:
+                
+                if require_item == 'YOUR_REQUIRED_ITEM':
+                    YOUR_REQUIRED_ITEM_FEATURE = require_detail
+                    if not FIT YOUR EQUIRED_ITEM_FEATURE:
+                        self.valid_errors.append(self.error_mapping['regex'])
+                        valid = False
+            """
+
         return valid
 
 
@@ -142,6 +152,20 @@ def parse_schema(schema, raise_error=True):
                     raise error.SchemaError("at 'type' config", -1)
                 error_mapping['type'] = error.TypeError(err_statu, err_msg, data_type)
                 feature_mapping['type'] = data_type
+
+            """"=================extend here ===========================
+                extend new require item like:
+                
+                if require_item == 'YOUR_REQUIRE_ITEM':
+                    try:
+                        data_type = require_detail['YOUR_REQUIRE_ITEM']
+                    except Exception:
+                        raise error.SchemaError("at 'YOUR_REQUIRE_ITEM' config", -1)
+                    error_mapping['type'] = error.YOURERROR(err_statu, err_msg)
+                    feature_mapping['YOUR_REQUIRE_ITEM'] = YOUR_REQUIRE_ITEM_FEATURE
+            """
+
+
 
         inpsect_properties.append(PropertyValidder(property_name, feature_mapping, error_mapping))
 

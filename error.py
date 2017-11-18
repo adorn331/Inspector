@@ -15,6 +15,7 @@ class ValidError(Exception):
 
 
 class MissingError(ValidError):
+
     pass
 
 
@@ -32,3 +33,14 @@ class TypeError(ValidError):
     def __init__(self, message, status, type):
         super().__init__(message, status)
         self.type = type
+
+
+"""=========== extend here=================
+    add new error like:
+    
+    class YOURError(ValidError):
+    def __init__(self, message, status, YOUR_SPECIFIC_FEATURE):
+        super().__init__(message, status)
+        self.type = YOUR_SPECIFIC_FEATURE
+
+"""
