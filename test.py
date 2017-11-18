@@ -1,4 +1,4 @@
-import newinspector
+import inspector
 
 rule = {
     'name': {
@@ -40,7 +40,7 @@ data = {
 
 
 #raise the frist error capture
-inspector = newinspector.parse_schema(rule)
+inspector = inspector.parse_schema(rule)
 inspector.inspect(data)
 
 #not raise error version: just return the error list
