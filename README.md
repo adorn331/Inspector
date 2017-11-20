@@ -12,11 +12,6 @@ rule = {
             'error_code': 1,
             'alert': 'name is required'
         },
-        'type': {
-            'error_code': 2,
-            'alert': 'name must be a str!!',
-            'type': 'str'
-        },
         'regex': {
             'error_code': 3,
             'alert': 'name regex fail',
@@ -30,10 +25,6 @@ rule = {
         }
     },
     'age': {
-        'required': {
-            'error_code': 5,
-            'alert': 'age is required'
-        },
         'type': {
             'error_code': 6,
             'alert': 'age must be a int!!',
@@ -53,7 +44,9 @@ are necessary, else it will raise the schema error.
 
 then use `inspector.parse_schema` to parse the schema into the `Inspector` object
 like
-`inspector = inspector.parse_schema(rule)`
+```python
+inspector = inspector.parse_schema(rule)
+```
 then give check the input data:
 ```python
 data = {
@@ -71,7 +64,7 @@ try:
 ```
 if there the input data do not fit in with the schema, it will raise the specific error defined in error.py.
 
-NOTE: if you want the inspector not to raise error driectly when  checking data later,
+NOTE: if you want the inspector not to raise error driectly when  checking data,
 use the param:
 ```python
 inspector = inspector.parse_schema(rule, raise_error=False)
@@ -79,6 +72,17 @@ error_list = inspector.inspect(data).error()
 ```
 `inspector.inspect(data).error()` will return a list of all error appear in input data.
 
+## support check options
+* required: Check if this item is in the input data.
+* regex: Check if the string match the regex patter given.
+* type: Check if this item is a instance of the specific type given
+* range: You can use it to check the if the int are out of range, or the length of the string is out of range.
+You can only give one of the max or min, or both of it.
+And if you do so the default value of min is 0 and while the defalult max is infinite 
+
+
+NOTE: For each require item, the 'error_code' ,'alert' and specific feature (like the 'pattern' for 'regex' option)
+are necessary, else it will raise the schema error.
 
 
 ## How to extend
