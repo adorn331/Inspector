@@ -15,7 +15,6 @@ class ValidError(Exception):
 
 
 class MissingError(ValidError):
-
     pass
 
 
@@ -35,9 +34,16 @@ class TypeError(ValidError):
         self.type = type
 
 
-"""=========== extend here=================
+class RangeError(ValidError):
+    def __init__(self, message, status, minimum=0, maximum=float('inf')):
+        super().__init__(message, status)
+        self.minimum = minimum
+        self.maximum = maximum
+
+
+"""=========== extend here like=================
     add new error like:
-    
+
     class YOURError(ValidError):
     def __init__(self, message, status, YOUR_SPECIFIC_FEATURE):
         super().__init__(message, status)

@@ -1,8 +1,7 @@
 import error
 import re
 
-INSPECT_ITEMS = ('required', 'regex', 'type')  # the support inspect item in schema
-
+INSPECT_ITEMS = ('required', 'regex', 'type', 'range')  # the support inspect item in schema
 
 
 class PropertyValidder(object):
@@ -50,13 +49,26 @@ class PropertyValidder(object):
 
             """=============== extend here========================
                 you can extend new require_item like:
-                
+
                 if require_item == 'YOUR_REQUIRED_ITEM':
                     YOUR_REQUIRED_ITEM_FEATURE = require_detail
                     if not FIT YOUR EQUIRED_ITEM_FEATURE:
                         self.valid_errors.append(self.error_mapping['regex'])
                         valid = False
             """
+
+            # can validate the range of int or length of str.
+            if require_item == 'range':
+                maximum = require_detail['max']
+                minimum = require_detail['min']
+                if isinstance(value, str):
+                    if not minimum < len(value) < maximum:
+                        self.valid_errors.append(self.error_mapping['range'])
+                        valid = False
+                if isinstance(value, int):
+                    if not minimum < value < maximum:
+                        self.valid_errors.append(self.error_mapping['range'])
+                        valid = False
 
         return valid
 
@@ -65,6 +77,7 @@ class Inspector(object):
     """Inspector can inspect if the input data are valid
         refers to the PropertyValidders given
     """
+
     def __init__(self, inspect_properties=[], raise_error=True):
         """
         :param
@@ -95,7 +108,7 @@ class Inspector(object):
                 inspected_property = next(x for x in self.inspect_properties if x.name == key)
                 if not inspected_property.is_valid(value):
                     self._errors += inspected_property.valid_errors
-                    if self.raise_error:    #need to raise error.
+                    if self.raise_error:  # need to raise error.
                         raise inspected_property.valid_errors[0]
 
         return self
@@ -153,9 +166,9 @@ def parse_schema(schema, raise_error=True):
                 error_mapping['type'] = error.TypeError(err_statu, err_msg, data_type)
                 feature_mapping['type'] = data_type
 
-            """"=================extend here ===========================
+            """"=================extend here like===========================
                 extend new require item like:
-                
+
                 if require_item == 'YOUR_REQUIRE_ITEM':
                     try:
                         data_type = require_detail['YOUR_REQUIRE_ITEM']
@@ -164,8 +177,19 @@ def parse_schema(schema, raise_error=True):
                     error_mapping['type'] = error.YOURERROR(err_statu, err_msg)
                     feature_mapping['YOUR_REQUIRE_ITEM'] = YOUR_REQUIRE_ITEM_FEATURE
             """
-
-
+            # can validate the range of int or length of str.
+            # support only given min or max. the default value is 0 and infinite
+            if require_item == 'range':
+                maximum = require_detail.get('max', None)
+                minimum = require_detail.get('min', None)
+                if not maximum and not minimum:  # neither set max nor min, raise schema error
+                    raise error.SchemaError("at 'range' config", -1)
+                if not maximum:
+                    maximum = float('inf')
+                if not minimum:
+                    minimum = 0
+                error_mapping['range'] = error.RangeError(err_statu, err_msg, maximum, minimum)
+                feature_mapping['range'] = {'max': maximum, 'min': minimum}
 
         inpsect_properties.append(PropertyValidder(property_name, feature_mapping, error_mapping))
 
