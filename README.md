@@ -72,7 +72,7 @@ error_list = inspector.inspect(data).error()
 ```
 `inspector.inspect(data).error()` will return a list of all error appear in input data.
 
-## support check options
+## support options
 * required: Check if this item is in the input data.
 * regex: Check if the string match the regex patter given.
 * type: Check if this item is a instance of the specific type given
